@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="sling:OsgiConfig"
+    rolloutmgr.commit.size="{Long}500"
+    rolloutmgr.excludednodetypes.default="[cq:LiveSyncAction,cq:LiveSyncConfig,cq:BlueprintSyncConfig]"
+    rolloutmgr.excludedparagraphprops.default="[cq:propertyInheritanceCancelled]"
+    rolloutmgr.excludedprops.default="[hashValue,jcr:.*,sling:.*,(?!cq:tags)+cq:.*]"
+    rolloutmgr.threadpool.maxshutdowntime="{Long}10"
+    rolloutmgr.threadpool.maxsize="{Long}5"/>

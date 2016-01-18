@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="sling:OsgiConfig"
+    path="/"
+    headers="[ShibUid]"
+	cookies="[cqpsso]"
+	format="AsIs"	
+	trustedCredentialsAttribute="TrustedInfo"
+	auth.http.realm="Day Communique 5"
+	auth.default.loginpage="/libs/cq/core/content/login.html"
+	/>

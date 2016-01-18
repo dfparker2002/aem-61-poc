@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="sling:OsgiConfig"
+    path="/"
+    service.ranking="0"
+    headers="[ShibUid]"
+	format="AsIs"
+	jaas.controlFlag="sufficient"
+	jaas.ranking="1000"
+	usermap="[]"
+	trustedCredentialsAttribute="TrustedInfo"
+	jaas.realmName="jackrabbit.oak"
+	cookies="[cqpsso]"
+	parameters="[]"
+	/>

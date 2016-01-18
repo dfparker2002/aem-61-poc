@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd ">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- ========== PARENT PROJECT DESCRIPTION ========== -->
+	<parent>
+		<groupId>com.aem.poc</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<!-- ========== PROJECT DESCRIPTION =========== -->
+
+	<artifactId>poc-core</artifactId>
+	<version>${poc_build_version}</version>
+	<packaging>bundle</packaging>
+	<name>${project.groupId} - ${project.artifactId}</name>
+	<description>
+		An OSGi Bundle containing all java code for the 'Deloitte DotCom' project.
+		During development, this bundle can be automatically deployed to your CQ instance by activating the
+		"auto-deploy" profile and running the Maven "install" lifecycle phase (e.g. "mvn -Pauto-deploy install"). This
+		can also be done from within most IDEs like Eclipse.
+	</description>
+
+	<!-- ========== BUILD DEFINITION STARTS HERE ======= -->
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Activator>com.aem.poc.activator.Activator</Bundle-Activator>
+						<Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+						<Embed-Directory>OSGI-INF/lib</Embed-Directory>
+						<Embed-Transitive>true</Embed-Transitive>
+						<Import-Package>*;resolution:=optional</Import-Package>
+						<Export-Package>
+							com.aem.poc.activator;
+							com.aem.poc.constants;
+							com.aem.poc.exception;
+							com.aem.poc.sightly;
+							com.aem.poc.workflow;					
+							version=${project.version}</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.sling</groupId>
+				<artifactId>maven-sling-plugin</artifactId>
+				<configuration>
+					<slingUrl>http://${cq.local.author.host}:${cq.local.author.port}/apps/aem-poc/install</slingUrl>
+					<usePut>true</usePut>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-scr-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-scr-descriptor</id>
+						<goals>
+							<goal>scr</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-content-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<nonFilteredFileExtensions>
+								<nonFilteredFileExtension>jar</nonFilteredFileExtension>
+							</nonFilteredFileExtensions>
+							<outputDirectory>${project.build.directory}/vault-work</outputDirectory>
+							<includeEmptyDirs>true</includeEmptyDirs>
+							<resources>
+								<resource>
+									<directory>${basedir}/target</directory>
+									<includes>
+										<include>*.*</include>
+									</includes>
+									<targetPath>jcr_root/apps/aem-poc/install</targetPath>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.day.jcr.vault</groupId>
+				<artifactId>content-package-maven-plugin</artifactId>
+				<configuration>
+					<builtContentDirectory>false</builtContentDirectory>
+					<filterSource>${basedir}/src/main/resources/META-INF/vault/filter.xml</filterSource>
+				</configuration>
+				<executions>
+					<execution>
+						<id>copy-content-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.day.jcr.vault</groupId>
+				<artifactId>maven-vault-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
+			<!-- maven-CRX-plugin -->
+			<plugin>
+				<groupId>com.cognifide.maven.plugins</groupId>
+				<artifactId>maven-crx-plugin</artifactId>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+			</plugin>
+			<!-- maven-CRX-plugin -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.2.201409121644</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.felix
+										</groupId>
+										<artifactId>
+											maven-scr-plugin
+										</artifactId>
+										<versionRange>
+											[1.20.0,)
+										</versionRange>
+										<goals>
+											<goal>scr</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.jacoco</groupId>
+										<artifactId>
+											jacoco-maven-plugin
+										</artifactId>
+										<versionRange>
+											[0.7.2.201409121644,)
+										</versionRange>
+										<goals>
+											<goal>prepare-agent</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<!-- ========= BUILD DEFINITION ENDS HERE ========= -->
+
+	<dependencies>
+
+		<!-- ========= AEM DEPENDENCIES STARTS HERE ======= -->
+
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr.annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>biz.aQute</groupId>
+			<artifactId>bndlib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.http.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.day.cq.workflow</groupId>
+			<artifactId>cq-workflow-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.scr</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.granite</groupId>
+			<artifactId>com.adobe.granite.workflow.api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.day.commons.osgi.wrapper</groupId>
+			<artifactId>com.day.commons.osgi.wrapper.commons-email</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.day.commons.osgi.wrapper</groupId>
+			<artifactId>com.day.commons.osgi.wrapper.commons-lang2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.jcr.jcr-wrapper</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.day.commons.osgi.wrapper</groupId>
+			<artifactId>com.day.commons.osgi.wrapper.commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.sling</groupId>
+			<artifactId>org.apache.sling.scripting.jsp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.day.cq.collab</groupId>
+			<artifactId>cq-collab-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.cq.social</groupId>
+			<artifactId>cq-social-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			</dependency>
+		<dependency>
+			<groupId>com.adobe.aem</groupId>
+				<artifactId>uber-jar</artifactId>
+				<classifier>obfuscated-apis</classifier>
+		</dependency>
+
+		<!-- ========= AEM DEPENDENCIES ENDS HERE ========= -->
+
+		<!-- ========= JUNIT DEPENDENCIES STARTS HERE ========= -->
+
+		<dependency>
+			<groupId>org.jmockit</groupId>
+			<artifactId>jmockit-coverage</artifactId>
+			<version>1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+		</dependency>
+
+		<!-- =========== JUNIT DEPENDENCIES ENDS HERE =========== -->
+
+		<!-- =========== PROJECT DEPENDENCIES STARTS HERE -->
+
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.2</version>
+		</dependency>
+
+
+		<!-- PROJECT DEPENDENCIES ENDS HERE -->
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.11</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- ============================================================== -->
+			<!-- S L I N G   M O D E L S -->
+		<!-- ============================================================== -->
+      
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>org.apache.sling</groupId>
+            <artifactId>org.apache.sling.models.api</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+		
+		    <dependency>
+		      <groupId>org.apache.sling</groupId>
+		      <artifactId>org.apache.sling.models.impl</artifactId>
+		      <version>1.0.0</version>
+		    </dependency>
+		
+		<!-- ============================================================== -->
+			<!-- S L I N G   M O D E L S -->
+		<!-- ============================================================== -->
+		
+	</dependencies>		
+</project>

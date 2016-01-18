@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="sling:OsgiConfig"
+    endpoint.api="https://api.demdex.com/v1"
+    endpoint.token="https://api.demdex.com/oauth/token"
+    endpoint.event="https://deloitte.demdex.net/event"
+    clientsecret="BMhHd)oMA!0d"
+    clientid="deloitte-baaam"
+	/>
